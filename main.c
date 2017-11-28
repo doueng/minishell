@@ -55,13 +55,6 @@ static char	*ft_read_line(void)
 	return (line);
 }
 
-void		enable_raw(t_term *term)
-{
-	struct termios raw;
-
-
-}
-
 int			main(int argc, char *argv[], char *envp[])
 {
 	char	*line;
@@ -69,7 +62,6 @@ int			main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	enable_raw();
 	env = env_to_lst(envp);
 	signal(SIGINT, SIG_IGN);
 	while (1)

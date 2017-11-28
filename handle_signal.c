@@ -1,36 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   do_all_cmds.c                                      :+:      :+:    :+:   */
+/*   handle_signal.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/06 13:17:38 by dengstra          #+#    #+#             */
-/*   Updated: 2017/11/19 15:39:39 by douglas          ###   ########.fr       */
+/*   Created: 2017/11/19 22:42:15 by douglas           #+#    #+#             */
+/*   Updated: 2017/11/20 16:18:31 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini.h"
 
-int		contains_alnum(char *str)
+void		handle_signal(int sig_num)
 {
-	if (!str)
-		return (0);
-	while (*str)
-		if (ft_isalnum(*str++) || *str == '.' || *str == '/')
-			return (1);
-	return (0);
-}
-
-void	do_all_cmds(char *line, t_list *env)
-{
-	char	*tmp;
-
-	if (!contains_alnum(line))
-		return ;
-	if (!(tmp = ft_strchr(line, ';')))
-		return (do_cmds(line, env));
-	*tmp = '\0';
-	do_cmds(line, env);
-	do_all_cmds(tmp + 1, env);
+	if (sig_num == SIGINT)
+		;
+		// signal(SIGINT, handle_signal);
+	else if (sig_num == SIGTSTP)
+		;
+		// signal(SIGTSTP, handle_signal);
 }

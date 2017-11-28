@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dengstra <dengstra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/14 20:29:22 by douglas           #+#    #+#             */
-/*   Updated: 2017/09/02 16:56:19 by dengstra         ###   ########.fr       */
+/*   Updated: 2017/11/22 14:56:05 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,36 +28,8 @@ static void	print_prompt(void)
 	slash = (slash == 1) ? 0 : slash;
 	ft_putstr(BOLD_TEXT);
 	ft_print_color(&cwd[slash], CYAN_COLOR);
-	ft_putstr(CYAN_COLOR);
-	ft_printf("%ls", L" 👉  ");
-	ft_putstr(NORMAL_COLOR);
+	ft_putstr(" 👉  ");
 	free(cwd);
-}
-
-static char	*replace_all(char c, char *line, char *insert)
-{
-	char	*res;
-	int		cpyed;
-	int		count;
-	char	*result;
-	char	*start;
-
-	if (!ft_strchr(line, c) || !insert)
-		return (line);
-	start = line;
-	count = ft_count_chars(line, c);
-	res = ft_strnew_e(ft_strlen(line) + count * ft_strlen(insert) + 10);
-	result = res;
-	while (count--)
-	{
-		cpyed = ft_strcpytill_in(res, line, c);
-		line += cpyed + 1;
-		res += cpyed;
-		res += ft_strcpytill_in(res, insert, '\0');
-	}
-	ft_strcpytill_in(res, line, c);
-	free(start);
-	return (result);
 }
 
 static void	delone(void *content, size_t size)
@@ -68,6 +40,28 @@ static void	delone(void *content, size_t size)
 	free(content);
 }
 
+static char	*ft_read_line(void)
+{
+	char		*line;
+	int			size;
+	int			read_return;
+
+	size = 512;
+	line = ft_strnew_e(size);
+	read_return = read(0, line, size);
+	if (read_return == -1)
+		ft_error("read error");
+	line[ft_strlen(line) - 1] = 0;
+	return (line);
+}
+
+void		enable_raw(t_term *term)
+{
+	struct termios raw;
+
+
+}
+
 int			main(int argc, char *argv[], char *envp[])
 {
 	char	*line;
@@ -75,16 +69,17 @@ int			main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
+	enable_raw();
 	env = env_to_lst(envp);
+	signal(SIGINT, SIG_IGN);
 	while (1)
 	{
 		print_prompt();
 		ft_putstr(BOLD_TEXT);
-		get_next_line(0, &line);
+		line = ft_read_line();
 		ft_putstr(NORMAL_COLOR);
 		if (ft_strequ(line, "exit") || ft_strequ(line, "q"))
 			exit(0);
-		line = replace_all('~', line, get_value(env, "HOME", '\0'));
 		do_all_cmds(line, env);
 		free(line);
 	}

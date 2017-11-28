@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_cmds.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dengstra <dengstra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/16 23:44:09 by douglas           #+#    #+#             */
-/*   Updated: 2017/08/06 13:08:39 by dengstra         ###   ########.fr       */
+/*   Updated: 2017/11/17 09:44:03 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@ void	setenv_cmd(char *line, t_list *env)
 
 void	unsetenv_cmd(char *key, t_list **env)
 {
+
 	*env = ft_lstdelfind(*env, lst_del_node, lst_cmp, key);
 }

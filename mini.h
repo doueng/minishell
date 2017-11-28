@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dengstra <dengstra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/14 20:29:58 by douglas           #+#    #+#             */
-/*   Updated: 2017/08/06 13:23:00 by dengstra         ###   ########.fr       */
+/*   Updated: 2017/11/22 14:56:30 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <sys/wait.h>
 # include <locale.h>
 # include <dirent.h>
+# include <signal.h>
 
 typedef struct	s_env
 {
@@ -25,6 +26,16 @@ typedef struct	s_env
 	char		*value;
 }				t_env;
 
+typedef struct	s_term
+{
+
+}				t_term;
+
+void			handle_signal(int sig_num);
+void			*resize(void *memory, int *mem_size, int used_mem);
+void			replacer(t_list *env, char **split);
+int				ft_strlen_till(char *str, char c);
+char			*ft_strnew_e(size_t size);
 int				start_program(char *cmd_path, char **cmd, char **environ);
 void			do_all_cmds(char *line, t_list *env);
 int				system_cmd(char **split, t_list *env, char **environ);
@@ -40,8 +51,7 @@ void			env_cmd(t_list *env);
 void			setenv_cmd(char *line, t_list *env);
 void			unsetenv_cmd(char *key, t_list **env);
 void			do_cmds(char *line, t_list *env);
-int				builtin_cmd(char *line, char **split,
-								t_list *env, char *cwd);
+int				builtin_cmd(char **split, t_list *env, char *cwd);
 char			*get_value(t_list *node, char *key, char till);
 int				contains_alnum(char *str);
 int				ft_cmp_till(char *a, char *b, char till);

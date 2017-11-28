@@ -3,37 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   system_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dengstra <dengstra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/06 13:10:43 by dengstra          #+#    #+#             */
-/*   Updated: 2017/09/14 14:58:23 by dengstra         ###   ########.fr       */
+/*   Updated: 2017/11/17 12:12:21 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini.h"
 
-static char		*path_maker(char *path, char *str)
+static char		*path_maker(char *path, char *cmd)
 {
 	char *new_path;
+	char *tmp;
 
-	if (!(new_path = ft_strjoinfree(0, path, 0, "/")))
-		ft_error("Malloc failed");
-	if (!(new_path = ft_strjoinfree(1, new_path, 0, str)))
-		ft_error("Malloc failed");
+	new_path = ft_strnew_e(ft_strlen(path) + sizeof('/') + ft_strlen(cmd));
+	tmp = ft_strcat_end(new_path, path);
+	tmp = ft_strcat_end(tmp, "/");
+	ft_strcat_end(tmp, cmd);
 	return (new_path);
-}
-
-static char		*get_cmd(char *line)
-{
-	char *res;
-
-	res = NULL;
-	while (*line)
-	{
-		if (*line++ == '/')
-			res = line;
-	}
-	return (res);
 }
 
 static int		contains_cmd(char *path, char *cmd)
@@ -54,14 +42,17 @@ static int		contains_cmd(char *path, char *cmd)
 	return (result);
 }
 
-static int		start(char *value, char **split, char **environ)
+int				system_cmd(char **split, t_list *env, char **environ)
 {
 	char	**paths;
 	int		i;
 	char	*cmd_path;
+	char	*path_env;
 
 	i = 0;
-	paths = ft_strsplit_e(value, ':');
+	if (!(path_env = get_value(env, "PATH", '\0')))
+		return (-1);
+	paths = ft_strsplit_e(path_env, ':');
 	while (paths[i])
 	{
 		if (contains_cmd(paths[i], split[0]))
@@ -79,26 +70,4 @@ static int		start(char *value, char **split, char **environ)
 	}
 	ft_free_split(paths);
 	return (-1);
-}
-
-int				system_cmd(char **split, t_list *env, char **environ)
-{
-	char	*value;
-	char	*cmd;
-	int		dir_path_len;
-
-	cmd = get_cmd(split[0]);
-	if (cmd)
-	{
-		dir_path_len = ft_strlen(split[0]) - ft_strlen(cmd);
-		split[0][dir_path_len - 1] = '\0';
-	}
-	if (contains_cmd(split[0], cmd))
-	{
-		split[0][dir_path_len - 1] = '/';
-		return (start_program(split[0], split, environ));
-	}
-	if (!(value = get_value(env, "PATH", '\0')))
-		return (-1);
-	return (start(value, split, environ));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dengstra <dengstra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: douglas <douglas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/15 14:16:29 by douglas           #+#    #+#             */
-/*   Updated: 2017/09/14 15:33:15 by dengstra         ###   ########.fr       */
+/*   Updated: 2017/11/19 22:45:49 by douglas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int				start_program(char *cmd_path, char **cmd, char **environ)
 {
 	pid_t	pid;
 
+	if (access(cmd_path, X_OK))
+		return (-1);
 	if ((pid = fork()) < 0)
 		ft_error("fork failed");
 	if (pid == 0)
@@ -27,15 +29,9 @@ int				start_program(char *cmd_path, char **cmd, char **environ)
 	return (-1);
 }
 
-static int		exe_cmd(char **split, char *cwd, char **environ)
+static int		exe_cmd(char **split, char **environ)
 {
-	char	*exe;
-	int		success;
-
-	exe = ft_strjoin_e(cwd, &split[0][1]);
-	success = start_program(exe, split, environ);
-	free(exe);
-	return (success);
+	return (start_program(split[0], split, environ));
 }
 
 char			**lst_to_environ(t_list *env)
@@ -73,19 +69,18 @@ void			do_cmds(char *line, t_list *env)
 	char **environ;
 
 	environ = lst_to_environ(env);
-	if (!contains_alnum(line))
-		return ;
 	if (!(cwd = getcwd(NULL, 0)))
 		ft_error("getcwd failed");
 	path = ft_strjoin_e("PWD=", cwd);
 	setenv_cmd(path, env);
 	free(path);
 	split = ft_strsplit_e(line, ' ');
-	if (0 == builtin_cmd(line, split, env, cwd))
+	replacer(env, split);
+	if (0 == builtin_cmd(split, env, cwd))
 		;
 	else if (0 == system_cmd(split, env, environ))
 		;
-	else if (0 == exe_cmd(split, cwd, environ))
+	else if (0 == exe_cmd(split, environ))
 		;
 	else
 		ft_printf("command not found: %s\n", line);
